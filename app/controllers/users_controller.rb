@@ -1,17 +1,28 @@
 class UsersController < ApplicationController
+  before_action :redirect_signed_in, only: [:new, :create]
+  
   def new
     @user = User.new
   end
 
   def create
-    p "--------------------Create"
     @user = User.new(user_params)
-    if @user.save!
+    if @user.save
+      login_user!(@user)
       redirect_to user_url(@user)
     else
-      p "--------------------Not svaed"
-      # render :new
+      flash[:errors] = @user.errors.messages
+      render :new
     end
+  end
+
+  def index
+    @users = User.all
+  end
+
+  def show
+    @user = User.find(params[:id])
+    render :show
   end
 
   def user_params

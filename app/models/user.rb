@@ -5,6 +5,11 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 6, allow_nil: true }
   after_initialize :ensure_session_token
 
+  has_many :cats,
+    foreign_key: :user_id,
+    primary_key: :id,
+    class_name: "Cat"
+
   def self.generate_session_token
     SecureRandom.urlsafe_base64
   end

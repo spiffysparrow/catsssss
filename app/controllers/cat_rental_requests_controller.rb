@@ -1,4 +1,5 @@
 class CatRentalRequestsController < ApplicationController
+  before_action :owner?, only: [:edit, :update]
   def approve
     current_cat_rental_request.approve!
     redirect_to cat_url(current_cat)
@@ -21,6 +22,14 @@ class CatRentalRequestsController < ApplicationController
 
   def new
     @rental_request = CatRentalRequest.new
+  end
+
+  def owner?
+    @cat = Cat.find(params[:id])
+    if !current_user.cats.include?(@cat)
+      flash[:errors] = ["You can only edit your own cats!"]
+      redirect_to cats_url
+    end
   end
 
   private
